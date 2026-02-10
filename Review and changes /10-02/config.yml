@@ -1,0 +1,36 @@
+# CuKEM System Configuration
+# Hybrid Post-Quantum Cryptography and Quantum Key Distribution
+
+# Core CuKEM Configuration
+cukem_mode: "hybrid"  # hybrid, pqc_only, qkd_only
+n_qubits: 256
+min_entropy: 0.8
+qber_threshold: 0.11
+chsh_verification: true
+output_key_length: 32
+
+# Adaptive Controller Configuration
+auto_fallback: true
+auto_recovery: true
+failure_threshold: 3
+recovery_threshold: 2
+health_check_interval: 60
+
+# Circuit Breaker Configuration
+circuit_breaker_enabled: true
+circuit_failure_threshold: 5
+circuit_success_threshold: 2
+circuit_timeout_seconds: 60
+
+# TLS Configuration
+tls_hostname: "localhost"
+tls_port: 8443
+tls_use_psk: true
+
+# Logging Configuration
+log_level: "INFO"
+log_file: "cukem.log"
+
+# Testing Configuration
+failure_injection_enabled: false
+network_simulation_enabled: false
