@@ -252,6 +252,5 @@ This is a reference implementation for academic and research purposes.
 - Entropy: NIST SP 800-90B
 - Key derivation: RFC 5869 (HKDF)
 
----
 
-**Questions?** Check the architecture documentation in `compass_artifact_wf-926a8cf6-17c3-468b-b702-d32a068bb291_text_markdown.md`
+
