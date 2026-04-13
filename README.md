@@ -18,17 +18,17 @@ This project implements **CuKEM** (Custom Unified Key Encapsulation Mechanism) -
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    APPLICATION LAYER                         │
-│         Key Manager │ Session Handler │ Public API           │
+│                    APPLICATION LAYER                        │
+│         Key Manager │ Session Handler │ Public API          │
 ├─────────────────────────────────────────────────────────────┤
-│                     PROTOCOL LAYER                           │
-│      Hybrid Key Exchange │ Fallback Controller (4-tier)      │
+│                     PROTOCOL LAYER                          │
+│      Hybrid Key Exchange │ Fallback Controller (4-tier)     │
 ├─────────────────────────────────────────────────────────────┤
-│               CRYPTOGRAPHIC PRIMITIVES LAYER                 │
-│  PQC (ML-KEM, ML-DSA) │ DIQKD (Bell, CHSH) │ Classical (AES) │
+│               CRYPTOGRAPHIC PRIMITIVES LAYER                │
+│ PQC (ML-KEM, ML-DSA) │ DIQKD (Bell, CHSH) │ Classical (AES) │
 ├─────────────────────────────────────────────────────────────┤
-│                 CORE INFRASTRUCTURE LAYER                    │
-│      Secure Memory │ RNG │ HKDF │ Logging & Metrics          │
+│                 CORE INFRASTRUCTURE LAYER                   │
+│      Secure Memory │ RNG │ HKDF │ Logging & Metrics         │
 └─────────────────────────────────────────────────────────────┘
 ```
 
