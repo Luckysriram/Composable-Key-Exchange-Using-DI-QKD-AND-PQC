@@ -81,7 +81,7 @@ class HKDFCombiner:
             combined_key = hkdf.derive(input_key_material)
 
             logger.info(f"Combined keys: PQC({len(pqc_key)}B) + QKD({len(quantum_key)}B) "
-                       f"→ {output_length}B")
+                       f"-> {output_length}B")
 
             return CombinerResult(
                 success=True,

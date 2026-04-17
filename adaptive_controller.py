@@ -44,7 +44,7 @@ class HealthMetrics:
     qkd_success_rate: float = 1.0
     avg_qber: float = 0.0
     avg_chsh_value: float = 0.0
-    avg_entropy: float = 0.0
+    avg_entropy: float = 1.0
     total_exchanges: int = 0
     failed_exchanges: int = 0
     avg_latency_ms: float = 0.0
@@ -388,7 +388,7 @@ class AdaptiveController:
             metrics=HealthMetrics(**self.current_metrics.__dict__)
         )
         self.event_log.append(event)
-        logger.info(f"Event: {event_type} - {from_state.value} → {to_state.value}: {reason}")
+        logger.info(f"Event: {event_type} - {from_state.value} -> {to_state.value}: {reason}")
 
     def get_health_status(self) -> HealthStatus:
         """Get current health status"""

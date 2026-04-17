@@ -108,10 +108,12 @@ class EntropyEstimator:
 
     def collision_estimate(self, data: List[int]) -> float:
         """
-        Collision test estimate.
+        Collision entropy estimate (Rényi entropy of order 2).
 
-        Estimates entropy based on the mean time between collisions
-        (repeated values).
+        H₂ = -log₂(Σ pᵢ²)
+
+        This is a lower bound on Shannon entropy and works correctly
+        for any alphabet size including binary data.
 
         Args:
             data: Input data sequence
@@ -122,32 +124,17 @@ class EntropyEstimator:
         if len(data) < 2:
             return 0.0
 
-        seen = set()
-        collisions = 0
-        positions = []
+        counts = Counter(data)
+        total = len(data)
+        sum_p_sq = sum((count / total) ** 2 for count in counts.values())
 
-        for i, value in enumerate(data):
-            if value in seen:
-                collisions += 1
-                positions.append(i)
-            seen.add(value)
+        if sum_p_sq >= 1.0:
+            return 0.0
 
-        if collisions == 0:
-            # No collisions - very high entropy
-            return math.log2(len(data))
+        collision_entropy = -math.log2(sum_p_sq)
 
-        mean_collision_time = len(data) / collisions if collisions > 0 else len(data)
-
-        # Estimate based on collision time
-        # X ~ sqrt(2^H * pi/2) for collision time
-        if mean_collision_time > 0:
-            H = 2 * math.log2(mean_collision_time) - math.log2(math.pi / 2)
-            min_entropy = max(0, H / len(data))
-        else:
-            min_entropy = 0.0
-
-        logger.debug(f"Collision estimate: {min_entropy:.4f} ({collisions} collisions)")
-        return min_entropy
+        logger.debug(f"Collision estimate: {collision_entropy:.4f} (sum_p²={sum_p_sq:.6f})")
+        return max(0, collision_entropy)
 
     def markov_estimate(self, data: List[int]) -> float:
         """

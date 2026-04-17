@@ -124,7 +124,7 @@ class PrivacyAmplifier:
                 compression_ratio=compression_ratio
             )
 
-            logger.info(f"Privacy amplification: {len(key)} → {output_length} bytes "
+            logger.info(f"Privacy amplification: {len(key)} -> {output_length} bytes "
                        f"(ratio: {compression_ratio:.2f})")
             return result
 

@@ -36,7 +36,7 @@ class CuKEMMode(Enum):
 class CuKEMConfig:
     """Configuration for CuKEM"""
     mode: CuKEMMode = CuKEMMode.HYBRID
-    n_qubits: int = 256
+    n_qubits: int = 3000
     min_entropy: float = 0.8
     qber_threshold: float = 0.11
     chsh_verification: bool = True
@@ -111,7 +111,7 @@ class CuKEM:
         """
         return self.pqc_kem.generate_keypair()
 
-    def establish_quantum_channel(self, noise_level: float = 0.0) -> Tuple[bool, Optional[bytes]]:
+    def establish_quantum_channel(self, noise_level: float = 0.0) -> Tuple[bool, Optional[bytes], Optional[object]]:
         """
         Establish quantum channel and generate quantum key.
 
@@ -119,7 +119,7 @@ class CuKEM:
             noise_level: Simulated channel noise
 
         Returns:
-            Tuple of (success, quantum_key)
+            Tuple of (success, quantum_key, entropy_result)
         """
         warnings = []
 
@@ -132,7 +132,7 @@ class CuKEM:
                 logger.warning("CHSH verification failed - quantum channel may be compromised")
                 warnings.append("CHSH verification failed")
                 if self.config.mode == CuKEMMode.QKD_ONLY:
-                    return False, None
+                    return False, None, None
 
         # Step 2: BB84 quantum key distribution
         logger.info("Executing BB84 protocol")
@@ -140,7 +140,7 @@ class CuKEM:
 
         if not bb84_result.success:
             logger.error(f"BB84 failed: {bb84_result.error}")
-            return False, None
+            return False, None, None
 
         quantum_key = bb84_result.raw_key
 
@@ -161,10 +161,10 @@ class CuKEM:
 
         if not amp_result.success:
             logger.error(f"Privacy amplification failed: {amp_result.error}")
-            return False, None
+            return False, None, entropy_result
 
         logger.info(f"Quantum channel established: {amp_result.output_length} bytes")
-        return True, amp_result.amplified_key
+        return True, amp_result.amplified_key, entropy_result
 
     def initiate_exchange(self, responder_public_key: bytes,
                          noise_level: float = 0.0) -> CuKEMResult:
@@ -208,7 +208,7 @@ class CuKEM:
             # Layer 2-3: Quantum Key Distribution
             quantum_key = None
             if self.config.mode in [CuKEMMode.HYBRID, CuKEMMode.QKD_ONLY]:
-                success, quantum_key = self.establish_quantum_channel(noise_level)
+                success, quantum_key, entropy_result = self.establish_quantum_channel(noise_level)
 
                 if not success:
                     logger.warning("Quantum channel establishment failed")
@@ -268,6 +268,7 @@ class CuKEM:
                 shared_key=final_key,
                 key_length=len(final_key),
                 pqc_result=pqc_result,
+                entropy_result=entropy_result,
                 fallback_used=fallback_used,
                 warnings=warnings
             )
@@ -295,6 +296,7 @@ class CuKEM:
             CuKEMResult with shared key
         """
         warnings = []
+        entropy_result = None
 
         try:
             logger.info("=== CuKEM Key Exchange: RESPONDER ===")
@@ -317,7 +319,7 @@ class CuKEM:
             # Layer 2-3: Quantum Key Distribution
             quantum_key = None
             if self.config.mode in [CuKEMMode.HYBRID, CuKEMMode.QKD_ONLY]:
-                success, quantum_key = self.establish_quantum_channel(noise_level)
+                success, quantum_key, entropy_result = self.establish_quantum_channel(noise_level)
 
                 if not success and self.config.mode == CuKEMMode.QKD_ONLY:
                     return CuKEMResult(
@@ -351,6 +353,7 @@ class CuKEM:
                 shared_key=final_key,
                 key_length=len(final_key),
                 pqc_result=pqc_result,
+                entropy_result=entropy_result,
                 warnings=warnings
             )
 

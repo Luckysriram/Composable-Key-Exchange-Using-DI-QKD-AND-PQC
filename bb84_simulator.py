@@ -10,7 +10,6 @@ from typing import List, Tuple, Optional
 import numpy as np
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit_aer import AerSimulator
-from qiskit.visualization import plot_histogram
 import logging
 import secrets
 
